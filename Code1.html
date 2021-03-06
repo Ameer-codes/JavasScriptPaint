@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="author" content="Abdullahi Hamisu (twitter.com/_aetheling)">
+	<link rel="stylesheet" type="text/css" href="css/all.css">
+	<title>Finale</title>
+	<style type="text/css">
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			transition: all ease-in .1s;
+		}
+		html, body {
+			height: 100%;
+			width: 100%;		
+		}
+		main {
+			height: 100%;
+			width: 100%;
+			display: flex;
+			align-items:  center;
+		}
+		button[tool]:hover  {
+			color : #ffffff;
+			background-color: #976ABB;
+		}
+		main > .sidebar {
+			width: 4%;
+			height: 100%;
+			border: none ;
+			display: inline-flex;
+			background-color: #913d88;
+			flex-direction: column;
+		}
+		.left-bar {
+			width: 20%;
+			height: 100%;
+			border: none ;
+			display: inline-flex;
+			flex-direction: column;
+			justify-content: flex-start;
+			background-color: #913ABB;
+			padding: 15px;
+		}
+		.sidebar > * {
+			display: block;
+			width: 100%;
+			background-color: #913ABB;
+			border: none;
+			color: white;
+			flex: 1;
+		}
+		.left-bar > * {
+			display: block;
+			width: 100%;
+			background-color: #913ABB;
+			border: none;
+		}
+		main > .canvas-area {
+			height: 100%;
+			width: 76%;
+			position: relative;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+			background: #fafafa;
+		}
+		.row {
+			position: absolute;
+			display: inline-flex;
+			flex-direction: row;
+			justify-content: space-around;
+			align-items: center;
+			width: 80%;
+			padding: 20px 10px 20px 10px;
+			margin-top: 2%;
+			z-index: 2;
+			top: 20px;
+		}
+		.row .text-mode {
+			border: solid 2px transparent;
+			padding: 8px 10px 8px 10px;
+			background-color: #913ABB;
+			border-radius: 2em;
+			color: white;
+			font-family: calibri;
+			font-weight: bold;
+			text-align: center;
+			font-size: 11px;
+			transition: all ease .3s;
+		}
+		.text-mode:hover {
+			background-color: transparent;
+			color: #913ABB;
+			border: solid 2px #913ABB;
+		}
+		.canvas-container {
+			flex: 1;
+			width: 100%;
+			display: inline-flex;
+			flex-direction: row;
+			justify-content: center;
+			justify-content: center;
+			align-items: center;
+		}
+		.canvas-container > .canvas-wrapper, canvas {
+			display: inline-block;
+			height: 300px;
+			width: 600px;
+			position: relative;
+			background-color:  white;
+		}
+		.canvas-text {
+			border: solid 1px black;
+			background-color: transparent;
+			padding: 0;
+			font-family: 'Century Gothic';
+			display: inline-block;
+			width: max-content;
+		}
+		.left-pane-item {
+			display: inline-flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: flex-start;
+		}
+		.left-pane-item > * {
+			margin-top: 20px;
+			width: 100%;
+		}
+		p.desc {
+			font-family: calibri;
+			font-size: 11px;
+			color: white;
+			font-weight: bold;
+			margin-bottom: 3px;
+		}
+		input[type=range] {
+			margin-top: 10px;
+			height: 2px;
+			width: 100%;
+		}
+		input[type=range]::-moz-range-track, input[type=range]::-webkit-slider-runnable-track {
+			background-color:  #976ABB;
+			height: 2px;
+			width: 100%;
+			border-radius: 1px;
+		}
+		input[type=range]::-moz-range-thumb,  input[type=range]::-webkit-slider-thumb {
+			background-color:  #9A7ABB;
+			height: 10px;
+			width: 10px;
+			border: solid 1px  #9A7ABB;
+			border-radius: 50%;
+		}
+		.left-pane-row {
+			width: 100%;
+			height: max-content;
+			display: inline-flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+		}
+		.left-pane-row button {
+			font-size: 20px;
+			color: white;
+			border: none;
+			background-color: transparent;
+			padding: 5px;
+		}
+		.left-pane-row button:hover {
+			background-color: #976ABB;
+		}
+		.colour-picker {
+			padding: 0;
+			height: 30px;
+			width: 30px;
+			background-color: transparent;
+			border: none;
+		}
+		.wrapper {
+			width: max-content;
+			height: max-content;
+			padding: 5px;
+			display: inline-flex;
+			justify-content: space-between;
+			align-items: center;
+			flex-direction: column;
+
+		}
+		.wrapper:hover {
+			background-color:  #976ABB;
+			padding: 5px;
+		}
+		.wrapper > .text {
+			color: white;
+			font-family: calibri;
+			font-size: 9px;
+			margin-top: 2px;
+		}
+		.colour-picker::-moz-color-swatch {
+			width: 100%;
+			height: 100%;
+			background-color: transparent;
+			border: none;
+			border-radius: 50%;
+		}
+	</style>
+</head>
+<body>
+	<main>
+		<div class="sidebar">
+			<button tool="select"  class="fa fa-mouse-pointer fa-sm"></button>
+			<button tool="scribble" class="fa fa-paint-brush fa-sm"></button>
+			<button tool="sprayPaint" class="fa fa-spray-can fa-sm"></button>
+			<button tool="glowPen" class="fa fa-lightbulb fa-sm"></button>
+			<button tool="eraser" class="fa fa-eraser fa-sm"></button>
+			<button tool="eyeDropper" class="fa fa-eye-dropper fa-sm"></button>
+			<button tool="text" class="fa fa-font fa-sm"></button>
+			<button tool="download" class="fa fa-download fa-sm"></button>	
+		</div>
+		<div class="canvas-area">		
+		<span class="canvas-container">
+			<span class="row">
+					<button class="text-mode">Normal</button>
+					<button class="text-mode">Neon</button>
+					<button class="text-mode">Royal</button>
+					<button class="text-mode">Quill</button>
+					<button class="text-mode">Minimalist</button>
+			</span>
+			<div class="canvas-wrapper"><canvas width="600px" height="300px"></canvas></div>
+			</span>
+		</div>
+		<div class="left-bar">
+			<ul type="none" class="left-pane-item">
+					<li>
+						<p class ="desc">Brush size</p>
+						<input type="range" min= "2" value="10" max="30" step="1" id="brush-size"/>
+					</li>
+					<li>
+						<p class ="desc">Font size</p>
+						<input type="range" min= "2" max="100" step="1"  value="14" id="font-size"/>
+					</li>
+					<li style="margin-bottom: 5px;">
+						<p class ="desc">Text width</p>
+						<input type="range" min= "20" value="" max="600" step="1"  id="text-width"/>
+					</li>
+			</ul>
+/			<ul class="left-pane-item" type="none">
+				<li>
+					<p class="desc">Alignment</p>
+					<span  class="left-pane-row">
+						<span class="wrapper">
+							<button class="fa fa-align-left" alignment="left"></button>
+							<p class="text">Left</p>
+						</span>
+						<span class="wrapper">
+							<button class="fa fa-align-center" alignment="center"></button>
+							<p class="text">Center</p>
+						</span>
+						<span class="wrapper">
+							<button class="fa fa-align-right" alignment="right"></button>
+							<p class="text">Right</p>
+						</span>
+					</span>
+				</li>
+			</ul>	
+			<ul class="left-pane-item" type="none">
+				<li>
+					<p class="desc" align="left">Colours</p>
+					<span  class="left-pane-row">
+						<span class="wrapper">	
+							<input type="color" class="colour-picker">
+							<p class="text">Brush colour</p>
+						</span>
+						<span class="wrapper">	
+							<input type="color" class="colour-picker">
+							<p class="text">Text colour</p>
+						</span>
+						<span class="wrapper">	
+							<input type="color" class="colour-picker">
+							<p class="text">Neon colour</p>
+						</span>
+					</span>
+				</li>
+			</ul>	
+		</div>
+		<script type="text/javascript">
+			//initializing variables
+			let drawingState, currentTool, point, fontFace, mode, fontSize, textWidth, textAlign,brushSize, brushColour, textColour, glowColour, foccused, drawText;
+
+			//selecting DOM element
+			let tools = document.querySelectorAll("button[tool]");
+			const canvas = document.querySelector("canvas");
+			const ctx = canvas.getContext("2d");
+			
+		
+			let alignment = document.querySelectorAll("button[alignment]");			 
+			let sliders = document.querySelectorAll(".left-pane-item input[type=range]");
+			let pallete = document.querySelectorAll(".left-pane-item input[type=color]");
+			let textMode = document.querySelectorAll("button.text-mode");
+	
+			fontFace = fontFace == null ? "Calibri": fontFace;
+			textMode.forEach(mode => {
+				mode.onclick = event => {
+					mode = event.target.innerText;
+					switch(mode) {
+						case "Normal":
+							fontFace = "calibri"
+							console.log(fontFace);
+							break;
+						case "Minimalist":
+							fontFace = "Century Gothic"
+							console.log(fontFace);
+							break;
+						case "Royal":
+							fontFace = "Old English Text MT"
+							console.log(fontFace);
+							break;
+						case "Quill":
+							fontFace = "Edwardian script ITC"
+							console.log(fontFace);
+							break;
+						case "Neon":
+							fontFace = "Rage Italic"
+							console.log(fontFace);
+							break;	
+					}
+				}
+			});
+
+			 //Settting Color values to variables
+			brushColour = pallete[0].value, textColour = pallete[1].value,  glowColour = pallete[2].value;
+			//Adding event listeners to color inputs
+			pallete[0].onchange  = event => {
+				brushColour = event.target.value; //Settting Color values to variables
+			} 
+			pallete[1].onchange  = event => {
+				textColour = event.target.value; //Settting Color values to variables
+			} 
+			pallete[2].onchange  = event => {
+				glowColour = event.target.value; //Settting Color values to variables
+			} 
+			 //connecting DOM element values to brush properties
+			brushSize = sliders[0].value, fontSize = sliders[1].value, textWidth = sliders[2].value;
+		
+			sliders.forEach((slider) => {
+				slider.onchange = event => {
+					switch(event.target.id){
+						case 'brush-size':
+							brushSize = event.target.value; //Settting Color values to variables						
+							break;
+						case 'font-size':
+							fontSize = event.target.value; //Setting Color values to variables
+							break;
+						case 'text-width':
+							textWidth = event.target.value; //Setting Color values to variables
+							break;	
+						case 'glow-strength':
+							glowStrength = event.target.value; //Setting Color values to variables
+							break;
+					}
+				}
+			}); 
+
+			//Setting Alignment options to variable
+			alignment.forEach(element => {
+				element.onclick = event => {
+					textAlign = event.target.getAttribute("alignment");
+				}
+			});
+
+			//Creating draw functions
+			const select = () => currentTool = '';
+		
+			const glowPen = (point) =>{
+				ctx.globalCompositeOperation = "screen";
+				let {x1, y1, x2, y2} = point;
+				ctx.beginPath();
+				ctx.lineWidth = brushSize;
+				ctx.strokeStyle = "white";
+				ctx.lineCap = "round";
+				ctx.lineJoin = "round";
+				ctx.shadowOffsetX = 0;
+				ctx.shadowOffsetY = 0;
+				ctx.shadowColor = glowColour;
+				ctx.shadowBlur = 15;
+				ctx.moveTo(x1, y1);
+				//Seeting curve control point to Mid point coordinates
+				ctx.quadraticCurveTo(x1 + (x2-x1), y1 + (y2-y1), x2, y2);
+				ctx.stroke();
+				ctx.closePath();
+			}
+
+			const sprayPaint = (point, density) => {
+				ctx.globalCompositeOperation = "source-over"
+				let {x1, y1, x2, y2} = point;
+				for (var i = 0; i < density; i++) {
+					ctx.beginPath();
+					//Deactivating all shadwow properties
+					ctx.shadowOffsetX = null;
+					ctx.shadowOffsetY = null;
+					ctx.shadowColor = null;
+					ctx.shadowBlur = null;
+					ctx.fillStyle = brushColour; 
+					//Generating random angles
+					let randomAngle = Math.random() * 360; 
+					ctx.fillRect((x1 + (Math.random() * brushSize) * (Math.cos(randomAngle))),
+						(y1 + (Math.random() * brushSize) * (Math.sin(randomAngle))), Math.random() * 1, Math.random() * 1); //Randomising distribution and size of particles  
+					ctx.fill();					
+					ctx.closePath();
+				}
+			}
+
+			const classic = (point) => {
+				let {x1, y1, x2, y2} = point;
+				ctx.globalCompositeOperation = "source-over"
+				ctx.beginPath();
+				ctx.strokeStyle = brushColour;
+				ctx.lineWidth = brushSize;
+				ctx.lineCap = "round";
+				ctx.lineJoin = "round";
+				//deactivatiing shadow properties
+				ctx.shadowOffsetX = null;
+				ctx.shadowOffsetY = null;
+				ctx.shadowColor = null;
+				ctx.shadowBlur = null;
+				ctx.moveTo(x1, y1);
+				ctx.quadraticCurveTo(x1 + (x2-x1), y1 + (y2-y1), x2, y2);
+				ctx.stroke();
+			}
+
+			const eraser = (point) => {
+				let {x1, y1, x2, y2} = point;
+				ctx.globalCompositeOperation = "source-over";
+				ctx.beginPath();
+				ctx.strokeStyle = "white";
+				ctx.lineWidth = brushSize;
+				ctx.lineCap = "round";
+				ctx.lineJoin = "round";
+				//deactivatiing shadow properties
+				ctx.shadowOffsetX = null;
+				ctx.shadowOffsetY = null;
+				ctx.shadowColor = null;
+				ctx.shadowBlur = null;
+				ctx.moveTo(x1, y1);
+				ctx.quadraticCurveTo(x1 + (x2-x1), y1 + (y2-y1), x2, y2);
+				ctx.stroke();
+			}
+
+
+			//adding event listeners to buttons
+			tools.forEach((tool) => {
+				tool.onclick = (event) => {
+					currentTool = tool.getAttribute("tool");
+					console.log(currentTool);
+				};
+			});
+		
+			//adding event listeners to canvas
+			canvas.onmousedown = (event) => {
+				point = {x1: event.offsetX, y1: event.offsetY};
+				switch (currentTool) {
+					case 'text':
+						let textInput = document.createElement('input');
+						let top = event.offsetY;
+						let left = event.offsetX;
+						let elementWidth = 600 -left; //Setting elemnt's width to accommodate avaible canvas space;
+						textInput.className = "canvas-text";
+						textInput.setAttribute("type", 'text');
+						textInput.setAttribute("style", `position: absolute;font-family: ${fontFace};top: ${top - (fontSize/2)}px;left: ${left}px;width: ${elementWidth}px;border-style: dashed;font-size: ${fontSize}px;text-align: ${textAlign};color: ${textColour};text-shadow: `) // setting styling for created element
+						document.querySelector(".canvas-wrapper").appendChild(textInput);
+						var textMounted  =true; // creating state for appended element
+						let element = document.querySelector('.canvas-text');
+						element.onfocus = event => {
+								//preventing blur while changing text properties;
+								element.style.textShadow = fontFace == "Rage Italic" ? `0px 0px 15px ${glowColour}` : "";
+								sliders[1].onchange = event => {
+									element.focus();
+									fontSize = event.target.value;
+									element.style.fontSize = fontSize + "px";
+								}
+								sliders[2].onchange = event => {
+									element.focus();
+									textWidth = event.target.value;
+									element.style.width = textWidth + "px";
+								}
+								pallete[1].onchange  = event => {
+									element.focus();
+									textColour = event.target.value;
+									element.style.color  = textColour;
+								}
+								pallete[2].onchange  = event => {
+									element.focus();
+									glowColour = event.target.value;
+									element.style.textShadow = fontFace != "Rage Italic" ? null :"0px 0px 15px " + glowColour;
+								}
+								alignment.forEach(alignButton => {
+									alignButton.onclick = event => {
+										//seting alinment to text;
+										textAlign = event.target.getAttribute("alignment");
+										element.style.textAlign = textAlign;
+										element.focus();
+									}
+								});
+								textMode.forEach(mode => {
+									mode.onclick = event => {
+										mode = event.target.innerText;
+										switch(mode) {
+											case "Normal":
+												fontFace = "calibri"
+												console.log(fontFace);
+												element.style.textShadow = "";
+												break;
+											case "Minimalist":
+												fontFace = "Century Gothic"
+												console.log(fontFace);
+												element.style.textShadow = "";
+												break;
+											case "Quill":
+												fontFace = "Edwardian script ITC"
+												console.log(fontFace);
+												element.style.textShadow = "";
+												break;
+											case "Royal":
+												fontFace = "Old English Text MT";
+												console.log(fontFace);
+												element.style.textShadow = "";
+												break;	
+											case "Neon":
+												fontFace = "Rage Italic"
+												element.style.textShadow =  "glow";;
+												console.log(element.style.textShadow = "0px 0px 15px "+glowColour);
+												break;	
+										}
+										element.focus();
+										element.style.fontFamily =fontFace;
+										element.style.textShadow =  fontFace  == "Rage Italic" ? "0px 0px 15px " + glowColour : "";
+										console.log()
+									}
+								});
+							}
+						setTimeout(() => { 
+							let element = document.querySelector('.canvas-text');
+							let selected = element.focus();		
+							if (textMounted == true) {
+								element.parentNode.addEventListener("mousedown", event => {
+									if (element.value == "") {
+										element.remove();
+									} 
+									if (element.value != null && textMounted != false){
+										let alignmentOffset;
+										switch (textAlign) {
+											case "center":
+												alignmentOffset =Number(element.style.width.replace("px",""))/2;
+												break;
+											case "right":
+												alignmentOffset = Number(element.style.width.replace("px",""));
+												break;
+											case "left" :
+												alignmentOffset = 0;
+												break;
+											default: 
+												alignmentOffset = 0;
+												break;
+										}
+										ctx.textAlign = textAlign;
+										ctx.fillStyle = textColour;
+										ctx.shadowOffsetY = 0;
+										ctx.shadowOffsetX = 0;
+										ctx.shadowColor = element.style.textShadow == ""  ? 0 : glowColour;
+										ctx.shadowBlur =  element.style.textShadow == ""  ? 0 : 15;
+										ctx.font = ""+ fontSize + "px " + fontFace;
+										ctx.fillText(element.value,  Number(element.style.left.toString().replace("px","")) + alignmentOffset, Number(element.style.top.toString().replace("px",""))+ Number(fontSize));
+										textMounted = false;
+										element.remove(); // remove created elmeent from DOM
+									}
+								});
+							}
+						}, 1);
+						currentTool =null; //prevent duplicates of the text field;
+						break;	
+					case "download":
+						let data = canvas.toDataURL();
+						let download= document.createElement("a");
+						download.setAttribute("href", data);
+						download.setAttribute("download", "");
+						document.body.appendChild(download);
+						console.log(data);
+						setTimeout(() => {
+							document.querySelector("a").click();
+							document.querySelector("a").remove();
+						},10);
+						break;	
+					case "eyeDropper":
+						let imageData = ctx.getImageData(event.offsetX, event.offsetY, 1,1);
+						let [r, g,b] = imageData.data ;
+						r = r ==0 ? "00": Number(r).toString(16);
+						g = g ==0 ? "00": Number(g).toString(16);
+						b = b ==0 ? "00": Number(b).toString(16);
+						let colorValue = `#${r}${g}${b}`;
+						document.querySelectorAll("input[type=color]")[0].value =colorValue;
+						console.log(colorValue);
+						break;
+				}
+				drawingState = true;
+			}
+
+			canvas.onmousemove = (event) => {
+				if (drawingState == true) {
+					point.x2 = event.offsetX, point.y2 = event.offsetY;		
+					switch(currentTool) {
+						case 'sprayPaint':
+							sprayPaint(point, 15);
+							break;
+						case 'glowPen':
+							glowPen(point);
+							break;	
+						case 'scribble':
+							classic(point);
+							break;	
+						case 'eraser':
+							eraser(point)
+							break;
+					}
+					point.x1 = point.x2, point.y1 = point.y2;  // setting previous point to current point for better innterpolation
+				}
+			}
+
+			canvas.onmouseup = (event) => {
+				drawingState = false; //shhuting down the draw state
+			}	
+		</script>
+	</main>
+</body>
+</html>
